@@ -6,17 +6,28 @@
         input(
             name="email"
             type="email"
-            :value="email").form-control
+            v-model="email"
+            @input="$v.email.$touch()").form-control
+    pre {{ $v }}
 </template>
 
 <script>
+    
+    import { required, email } from "vuelidate/lib/validators";
+
     export default {
         name: "app",
         data(){
             return {
-                email: "email@yahoo.com",
+                email: '',
             }
         },
+        validations: {
+            email: {
+                required: required,
+                email: email,
+            }
+        }
     }
 </script>
 
