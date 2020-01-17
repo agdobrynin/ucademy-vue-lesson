@@ -21,7 +21,7 @@
         div(class="invalid-feedback" v-if="$v.password.$invalid && $v.password.$dirty ")
           span
             | #[span(v-if="password.length < $v.password.$params.minLength.min") Password must be more then #[strong {{ $v.password.$params.minLength.min }}] symbols.]
-            | #[span(v-if="!$v.password.strongPasswordWithNumbers") Password must content 2 numbers]
+            | #[span(v-if="!$v.password.strongPasswordWithNumbers") Password must content {{PASSWORD_STRONG_WITH_NUMBER_MIN}} numbers]
             | Now password is #[strong {{ password.length }}] symbols.
 
       div.form-group
@@ -56,21 +56,24 @@
   import axios from "axios";
 
   const MIN_PASSWORD_LENGTH = 6;
-  const REGEXP_PASSWORD_STRONG_WITH_NUMBER = /\d{2,}/gi;
+  const PASSWORD_STRONG_WITH_NUMBER_MIN = 2;
   const URL_CHECK_UNIQUE_EMAIL = "back.json";
 
   export default {
     name: "app",
+    created() {
+      this.PASSWORD_STRONG_WITH_NUMBER_MIN = PASSWORD_STRONG_WITH_NUMBER_MIN;
+    },
     data() {
       return {
         email: 'as@as.cc',
         isDebug: false,
-        password: '111111',
-        confirmPassword: '111111',
+        password: '',
+        confirmPassword: '',
         isEmailUnique: true,
         checkService: {
           fail: false,
-          message: 'default message',
+          message: '',
         }
       }
     },
@@ -94,7 +97,7 @@
 
       validateEmail() {
         this.$v.email.$touch();
-        this.isEmailUnique=true;
+        this.isEmailUnique = true;
       },
     },
     computed: {
@@ -115,7 +118,8 @@
         minLength: minLength(MIN_PASSWORD_LENGTH),
         required: required,
         strongPasswordWithNumbers: (newValue) => {
-          return REGEXP_PASSWORD_STRONG_WITH_NUMBER.test(newValue);
+          const numberMatches = newValue.match(/\d+/g) || [];
+          return numberMatches.join('').length >= PASSWORD_STRONG_WITH_NUMBER_MIN;
         },
       },
       confirmPassword: {
