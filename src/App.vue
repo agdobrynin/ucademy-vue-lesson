@@ -1,7 +1,7 @@
 <template lang="pug">
   div.container.pt-3#app
     h1.alert.alert-primary Hello World!
-    form(@submit.prevent="")
+    form(@submit.prevent="" method="post")
       div.form-group
         label Email #[span(v-if="!isEmailUnique") is not unique, please try other address]
         input(name="email" type="email"
@@ -102,8 +102,7 @@
     },
     computed: {
       canSubmit() {
-        const validatorSuccess = !this.$v.email.$invalid && !this.$v.password.$invalid && !this.$v.confirmPassword.$invalid;
-        return validatorSuccess && this.isEmailUnique;
+        return !this.$v.$invalid && this.isEmailUnique;
       },
       isValidEmail() {
         return !this.$v.email.$invalid && this.isEmailUnique;
